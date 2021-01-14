@@ -2,8 +2,8 @@ public struct Dictionarray<Element>: MutableCollection, RandomAccessCollection w
     public typealias Index = Int
     public typealias SubSequence = DictionarraySlice<Element>
     
-    private var ids: [Element.ID]
-    private var elements: [Element.ID: (index: Int, element: Element)]
+    public private(set) var ids: [Element.ID]
+    fileprivate private(set) var elements: [Element.ID: Element]
     
     public var startIndex: Int { 0 }
     public var endIndex: Int { ids.count }
@@ -16,100 +16,70 @@ public struct Dictionarray<Element>: MutableCollection, RandomAccessCollection w
     /// Complexity: *O(1)*
     public subscript(index: Int) -> Element {
         get {
-            elements[ids[index]]!.element
+            elements[ids[index]]!
         }
         set {
-            elements[ids[index]] = (index, newValue)
+            elements[ids[index]] = newValue
         }
     }
     
     /// Complexity: *O(1)*
     public subscript(id: Element.ID) -> Element? {
-        elements[id]?.element
+        elements[id]
     }
     
     /// Complexity: *O(1)*
     public subscript(bounds: Range<Int>) -> DictionarraySlice<Element> {
-        DictionarraySlice<Element>(self, bounds: bounds)
+        DictionarraySlice<Element>(ids: ids[bounds], elements: elements)
     }
     
-    /// Adds a new element at the end of the dictionarray.
-    /// If the dictionarray contains an element whose `id` is equal to the given `element`'s,
-    /// it returns the contained element instead of appending the given `element`.
-    ///
     /// Complexity: *O(1)*
-    ///
-    /// - Parameters:
-    ///     - element: The element to append to the dictionarray.
-    /// - Returns: An contained element and its index, or `nil` when the given `element` is appended.
-    @discardableResult
-    public mutating func append(_ element: Element) -> (index: Int, element: Element)? {
-        if let (index0, element0) = elements[element.id] {
-            return (index0, element0)
-        } else {
-            elements[element.id] = (count, element)
-            ids.append(element.id)
-            return nil
+    public mutating func append(_ element: Element) {
+        if elements.keys.contains(element.id) {
+            ids.remove(at: ids.firstIndex(of: element.id)!)
         }
-    }
-    
-    /// Adds a new element at the end of the dictionarray.
-    /// If the dictionarray contains an element whose `id` is equal to the given `element`'s,
-    /// the contained element is replaced with the given `element` instead of appending.
-    ///
-    /// Complexity: *O(1)*
-    ///
-    /// - Parameters:
-    ///     - element: The element to append to the dictionarray.
-    /// - Returns: An contained element and its index, or `nil` when the given `element` is appended.
-    @discardableResult
-    public mutating func appendOrReplace(_ element: Element) -> (index: Int, element: Element)? {
-        if let (index0, element0) = elements[element.id] {
-            elements[element.id] = (index0, element)
-            return (index0, element0)
-        } else {
-            elements[element.id] = (count, element)
-            ids.append(element.id)
-            return nil
-        }
+        elements[element.id] = element
+        ids.append(element.id)
     }
     
     /// Complexity: *O(n)*, where *n* is the length of the dictionarray.
-    @discardableResult
-    public mutating func insert(_ element: Element, at index: Int) -> (index: Int, element: Element)? {
-        if let (index0, element0) = elements[element.id] {
-            return (index0, element0)
-        } else {
-            elements[element.id] = (index, element)
-            for id in ids[index...] {
-                elements[id]!.index += 1
+    public mutating func insert(_ element: Element, at index: Int) {
+        var index: Int = index
+        if elements.keys.contains(element.id) {
+            let currentIndex: Int = ids.firstIndex(of: element.id)!
+            ids.remove(at: currentIndex)
+            if currentIndex < index {
+                index -= 1
             }
-            ids.insert(element.id, at: index)
-            return nil
         }
+        elements[element.id] = element
+        ids.insert(element.id, at: index)
     }
     
     /// Complexity: *O(1)*
     @discardableResult
     public mutating func popLast() -> Element? {
         guard let id = ids.popLast() else { return nil }
-        return elements.removeValue(forKey: id)!.element
+        return elements.removeValue(forKey: id)!
     }
     
     /// Complexity: *O(1)*
     @discardableResult
     public mutating func removeLast() -> Element {
         let id = ids.removeLast()
-        return elements.removeValue(forKey: id)!.element
+        return elements.removeValue(forKey: id)!
     }
     
     /// Complexity: *O(n)*, where *n* is the length of the dictionarray.
     @discardableResult
     public mutating func remove(at index: Int) -> Element {
         let id = ids.remove(at: index)
-        for id in ids[index...] {
-            elements[id]!.index -= 1
-        }
-        return elements.removeValue(forKey: id)!.element
+        return elements.removeValue(forKey: id)!
+    }
+}
+
+extension DictionarraySlice {
+    public init(_ dictionarray: Dictionarray<Element>) {
+        self.init(ids: dictionarray.ids[...], elements: dictionarray.elements)
     }
 }
