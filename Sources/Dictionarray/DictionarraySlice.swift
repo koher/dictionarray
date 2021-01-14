@@ -13,6 +13,14 @@ public struct DictionarraySlice<Element>: MutableCollection, RandomAccessCollect
         self.elements = elements
     }
     
+    public init(_ elements: [Element]) {
+        self.init(Dictionarray(elements))
+    }
+    
+    public init<S>(_ elements: S) where S: Sequence, S.Element == Element {
+        self.init(Dictionarray(elements))
+    }
+    
     /// Complexity: *O(1)*
     public subscript(index: Int) -> Element {
         get {
@@ -68,10 +76,15 @@ public struct DictionarraySlice<Element>: MutableCollection, RandomAccessCollect
     }
     
     /// Complexity: *O(1)*
-    @discardableResult
     public mutating func popLast() -> Element? {
         guard let id = ids.popLast() else { return nil }
         return elements.removeValue(forKey: id)!
+    }
+    
+    /// Complexity: *O(n)*, where *n* is the length of the dictionarray.
+    public mutating func popElement(for id: Element.ID) -> Element? {
+        guard let index = ids.firstIndex(of: id) else { return nil }
+        return remove(at: index)
     }
     
     /// Complexity: *O(1)*
@@ -86,5 +99,35 @@ public struct DictionarraySlice<Element>: MutableCollection, RandomAccessCollect
     public mutating func remove(at index: Int) -> Element {
         let id = ids.remove(at: index)
         return elements.removeValue(forKey: id)!
+    }
+    
+    /// Complexity: *O(n)*, where *n* is the length of the dictionarray.
+    @discardableResult
+    public mutating func removeElement(for id: Element.ID) -> Element {
+        let index = ids.firstIndex(of: id)!
+        return remove(at: index)
+    }
+}
+
+
+extension DictionarraySlice: ExpressibleByArrayLiteral {
+    public init(arrayLiteral elements: Element...) {
+        self.init(elements)
+    }
+}
+
+extension DictionarraySlice: CustomStringConvertible {
+    public var description: String {
+        Array(self).description
+    }
+}
+
+extension DictionarraySlice: Equatable where Element: Equatable {
+    public static func ==(lhs: Self, rhs: Self) -> Bool {
+        guard lhs.count == rhs.count else { return false }
+        for (l, r) in zip(lhs, rhs) {
+            guard l == r else { return false }
+        }
+        return true
     }
 }
