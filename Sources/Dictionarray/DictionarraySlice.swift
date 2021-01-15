@@ -65,7 +65,7 @@ public struct DictionarraySlice<Element>: MutableCollection, RandomAccessCollect
     }
     
     /// Complexity: *O(1)*
-    public subscript(id: Element.ID) -> Element? {
+    public subscript(id id: Element.ID) -> Element? {
         guard let (index, element) = elements[id] else { return nil }
         return ids.indices.contains(index) ? element : nil
     }
