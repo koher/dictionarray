@@ -60,7 +60,19 @@ public struct Dictionarray<Element>: MutableCollection, RandomAccessCollection w
     
     /// Complexity: *O(1)*
     public subscript(id id: Element.ID) -> Element {
-        elements[id]!.element
+        get {
+            guard let (_, element) = elements[id] else {
+                preconditionFailure("An element for ID \(id) is not contained.")
+            }
+            return element
+        }
+        set {
+            precondition(id == newValue.id)
+            guard elements.keys.contains(id) else {
+                preconditionFailure("An element for ID \(id) is not contained.")
+            }
+            elements[id]!.element = newValue
+        }
     }
     
     /// Complexity: *O(1)*

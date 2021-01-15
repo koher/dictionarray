@@ -66,10 +66,19 @@ public struct DictionarraySlice<Element>: MutableCollection, RandomAccessCollect
     
     /// Complexity: *O(1)*
     public subscript(id id: Element.ID) -> Element {
-        guard let (index, element) = elements[id], ids.indices.contains(index) else {
-            preconditionFailure("An element for ID \(id) is not contained.")
+        get {
+            guard let (index, element) = elements[id], ids.indices.contains(index) else {
+                preconditionFailure("An element for ID \(id) is not contained.")
+            }
+            return element
         }
-        return element
+        set {
+            precondition(id == newValue.id)
+            guard let (index, _) = elements[id], ids.indices.contains(index) else {
+                preconditionFailure("An element for ID \(id) is not contained.")
+            }
+            elements[id]!.element = newValue
+        }
     }
     
     /// Complexity: *O(1)*

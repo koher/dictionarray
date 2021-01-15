@@ -192,10 +192,26 @@ final class DictionarrayTests: XCTestCase {
     }
     
     func testSubscriptWithID() {
-        let a: Dictionarray<Foo> = foos3
-        XCTAssertEqual(a[id: "a"], Foo(id: "a", value: 2))
-        XCTAssertEqual(a[id: "b"], Foo(id: "b", value: 3))
-        XCTAssertEqual(a[id: "c"], Foo(id: "c", value: 5))
+        do { // get
+            let a: Dictionarray<Foo> = foos3
+            XCTAssertEqual(a[id: "a"], Foo(id: "a", value: 2))
+            XCTAssertEqual(a[id: "b"], Foo(id: "b", value: 3))
+            XCTAssertEqual(a[id: "c"], Foo(id: "c", value: 5))
+        }
+        do { // set
+            var a: Dictionarray<Foo> = foos3
+            a[id: "b"] = Foo(id: "b", value: 7)
+            XCTAssertEqual(a.count, 3)
+            XCTAssertEqual(a[0], Foo(id: "a", value: 2))
+            XCTAssertEqual(a[1], Foo(id: "b", value: 7))
+            XCTAssertEqual(a[2], Foo(id: "c", value: 5))
+            XCTAssertEqual(a[id: "a"], Foo(id: "a", value: 2))
+            XCTAssertEqual(a[id: "b"], Foo(id: "b", value: 7))
+            XCTAssertEqual(a[id: "c"], Foo(id: "c", value: 5))
+            XCTAssertEqual(a.index(for: "a"), 0)
+            XCTAssertEqual(a.index(for: "b"), 1)
+            XCTAssertEqual(a.index(for: "c"), 2)
+        }
     }
     
     func testSubscriptWithRange() {
