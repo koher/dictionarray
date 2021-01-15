@@ -312,6 +312,30 @@ final class DictionarrayTests: XCTestCase {
         }
     }
     
+    func testContainsElement() {
+        let a: Dictionarray<Foo> = [
+            Foo(id: "a", value: 2),
+            Foo(id: "b", value: 3),
+            Foo(id: "c", value: 5),
+        ]
+        XCTAssertTrue(a.containsElement(for: "a"))
+        XCTAssertTrue(a.containsElement(for: "b"))
+        XCTAssertTrue(a.containsElement(for: "c"))
+        XCTAssertFalse(a.containsElement(for: "d"))
+    }
+    
+    func testIndex() {
+        let a: Dictionarray<Foo> = [
+            Foo(id: "a", value: 2),
+            Foo(id: "b", value: 3),
+            Foo(id: "c", value: 5),
+        ]
+        XCTAssertEqual(a.index(for: "a"), 0)
+        XCTAssertEqual(a.index(for: "b"), 1)
+        XCTAssertEqual(a.index(for: "c"), 2)
+        XCTAssertNil(a.index(for: "d"))
+    }
+    
     func testAppend() {
         do {
             var a: Dictionarray<Foo> = [
