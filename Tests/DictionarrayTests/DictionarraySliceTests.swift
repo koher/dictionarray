@@ -237,6 +237,16 @@ final class DictionarraySliceTests: XCTestCase {
             XCTAssertEqual(r[id: "c"], Foo(id: "c", value: 5))
             XCTAssertEqual(r[id: "d"], Foo(id: "d", value: 7))
             XCTAssertNil(r[id: "e"])
+            XCTAssertFalse(r.containsElement(for: "a"))
+            XCTAssertTrue(r.containsElement(for: "b"))
+            XCTAssertTrue(r.containsElement(for: "c"))
+            XCTAssertTrue(r.containsElement(for: "d"))
+            XCTAssertFalse(r.containsElement(for: "e"))
+            XCTAssertNil(r.index(for: "a"))
+            XCTAssertEqual(r.index(for: "b"), 2)
+            XCTAssertEqual(r.index(for: "c"), 3)
+            XCTAssertEqual(r.index(for: "d"), 4)
+            XCTAssertNil(r.index(for: "e"))
         }
         
         do { // general RangeExpression
@@ -253,6 +263,16 @@ final class DictionarraySliceTests: XCTestCase {
             XCTAssertEqual(r[id: "c"], Foo(id: "c", value: 5))
             XCTAssertEqual(r[id: "d"], Foo(id: "d", value: 7))
             XCTAssertNil(r[id: "e"])
+            XCTAssertFalse(r.containsElement(for: "a"))
+            XCTAssertTrue(r.containsElement(for: "b"))
+            XCTAssertTrue(r.containsElement(for: "c"))
+            XCTAssertTrue(r.containsElement(for: "d"))
+            XCTAssertFalse(r.containsElement(for: "e"))
+            XCTAssertNil(r.index(for: "a"))
+            XCTAssertEqual(r.index(for: "b"), 2)
+            XCTAssertEqual(r.index(for: "c"), 3)
+            XCTAssertEqual(r.index(for: "d"), 4)
+            XCTAssertNil(r.index(for: "e"))
         }
         
         do { // UnboundRange
@@ -267,6 +287,12 @@ final class DictionarraySliceTests: XCTestCase {
             XCTAssertEqual(r[id: "a"], Foo(id: "a", value: 2))
             XCTAssertEqual(r[id: "b"], Foo(id: "b", value: 3))
             XCTAssertEqual(r[id: "c"], Foo(id: "c", value: 5))
+            XCTAssertTrue(r.containsElement(for: "a"))
+            XCTAssertTrue(r.containsElement(for: "b"))
+            XCTAssertTrue(r.containsElement(for: "c"))
+            XCTAssertEqual(r.index(for: "a"), 1)
+            XCTAssertEqual(r.index(for: "b"), 2)
+            XCTAssertEqual(r.index(for: "c"), 3)
         }
     }
     
