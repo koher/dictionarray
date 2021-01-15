@@ -142,6 +142,36 @@ final class DictionarrayTests: XCTestCase {
             XCTAssertEqual(a["d"], Foo(id: "d", value: 7))
         }
         
+        do { // set element with different existing id
+            var a: Dictionarray<Foo> = [
+                Foo(id: "a", value: 2),
+                Foo(id: "b", value: 3),
+                Foo(id: "c", value: 5),
+            ]
+            a[0] = Foo(id: "c", value: 7)
+            XCTAssertEqual(a.count, 2)
+            XCTAssertEqual(a[0], Foo(id: "c", value: 7))
+            XCTAssertEqual(a[1], Foo(id: "b", value: 3))
+            XCTAssertNil(a["a"])
+            XCTAssertEqual(a["b"], Foo(id: "b", value: 3))
+            XCTAssertEqual(a["c"], Foo(id: "c", value: 7))
+        }
+
+        do { // set element with different existing id (old index < new index)
+            var a: Dictionarray<Foo> = [
+                Foo(id: "a", value: 2),
+                Foo(id: "b", value: 3),
+                Foo(id: "c", value: 5),
+            ]
+            a[2] = Foo(id: "a", value: 7)
+            XCTAssertEqual(a.count, 2)
+            XCTAssertEqual(a[0], Foo(id: "b", value: 3))
+            XCTAssertEqual(a[1], Foo(id: "a", value: 7))
+            XCTAssertEqual(a["a"], Foo(id: "a", value: 7))
+            XCTAssertEqual(a["b"], Foo(id: "b", value: 3))
+            XCTAssertNil(a["c"])
+        }
+
         do { // change id
             var a: Dictionarray<Foo> = [
                 Foo(id: "a", value: 2),
@@ -157,39 +187,6 @@ final class DictionarrayTests: XCTestCase {
             XCTAssertNil(a["b"])
             XCTAssertEqual(a["c"], Foo(id: "c", value: 5))
             XCTAssertEqual(a["d"], Foo(id: "d", value: 3))
-        }
-
-        do { // id == "b" again
-            var a: Dictionarray<Foo> = [
-                Foo(id: "a", value: 2),
-                Foo(id: "b", value: 3),
-                Foo(id: "c", value: 5),
-            ]
-            a[1] = Foo(id: "d", value: 7)
-            a[1] = Foo(id: "b", value: 11)
-            XCTAssertEqual(a.count, 3)
-            XCTAssertEqual(a[0], Foo(id: "a", value: 2))
-            XCTAssertEqual(a[1], Foo(id: "b", value: 11))
-            XCTAssertEqual(a[2], Foo(id: "c", value: 5))
-            XCTAssertEqual(a["a"], Foo(id: "a", value: 2))
-            XCTAssertEqual(a["b"], Foo(id: "b", value: 11))
-            XCTAssertEqual(a["c"], Foo(id: "c", value: 5))
-            XCTAssertNil(a["d"])
-        }
-        
-        do { // element with existing id
-            var a: Dictionarray<Foo> = [
-                Foo(id: "a", value: 2),
-                Foo(id: "b", value: 3),
-                Foo(id: "c", value: 5),
-            ]
-            a[1] = Foo(id: "a", value: 7)
-            XCTAssertEqual(a.count, 2)
-            XCTAssertEqual(a[0], Foo(id: "a", value: 7))
-            XCTAssertEqual(a[1], Foo(id: "c", value: 5))
-            XCTAssertEqual(a["a"], Foo(id: "a", value: 7))
-            XCTAssertNil(a["b"])
-            XCTAssertEqual(a["c"], Foo(id: "c", value: 5))
         }
     }
     
@@ -217,6 +214,8 @@ final class DictionarrayTests: XCTestCase {
             ]
             let r: DictionarraySlice<Foo> = a[1 ..< 4]
             XCTAssertEqual(r.count, 3)
+            XCTAssertEqual(r.startIndex, 1)
+            XCTAssertEqual(r.endIndex, 4)
             XCTAssertEqual(r[1], Foo(id: "b", value: 3))
             XCTAssertEqual(r[2], Foo(id: "c", value: 5))
             XCTAssertEqual(r[3], Foo(id: "d", value: 7))
@@ -237,6 +236,8 @@ final class DictionarrayTests: XCTestCase {
             ]
             let r: DictionarraySlice<Foo> = a[1 ... 3]
             XCTAssertEqual(r.count, 3)
+            XCTAssertEqual(r.startIndex, 1)
+            XCTAssertEqual(r.endIndex, 4)
             XCTAssertEqual(r[1], Foo(id: "b", value: 3))
             XCTAssertEqual(r[2], Foo(id: "c", value: 5))
             XCTAssertEqual(r[3], Foo(id: "d", value: 7))
@@ -255,6 +256,8 @@ final class DictionarrayTests: XCTestCase {
             ]
             let r: DictionarraySlice<Foo> = a[...]
             XCTAssertEqual(r.count, 3)
+            XCTAssertEqual(r.startIndex, 0)
+            XCTAssertEqual(r.endIndex, 3)
             XCTAssertEqual(r[0], Foo(id: "a", value: 2))
             XCTAssertEqual(r[1], Foo(id: "b", value: 3))
             XCTAssertEqual(r[2], Foo(id: "c", value: 5))
@@ -341,7 +344,7 @@ final class DictionarrayTests: XCTestCase {
             XCTAssertEqual(a["e"], Foo(id: "e", value: 11))
         }
         
-        do { // element with existing id (current index < new index)
+        do { // element with existing id (old index < new index)
             var a: Dictionarray<Foo> = [
                 Foo(id: "a", value: 2),
                 Foo(id: "b", value: 3),
