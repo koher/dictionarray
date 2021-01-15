@@ -75,6 +75,12 @@ public struct DictionarraySlice<Element>: MutableCollection, RandomAccessCollect
         guard let index = elements[id]?.index else { return false }
         return indices.contains(index)
     }
+    
+    /// Complexity: *O(1)*
+    public func index(for id: Element.ID) -> Int? {
+        guard let index = elements[id]?.index else { return nil }
+        return indices.contains(index) ? index : nil
+    }
 
     private mutating func refreshElementsIfNeeded() {
         guard elements.count == elements.capacity else { return }

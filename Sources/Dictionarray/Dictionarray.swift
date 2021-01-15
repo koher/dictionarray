@@ -75,6 +75,11 @@ public struct Dictionarray<Element>: MutableCollection, RandomAccessCollection w
     public func containsElement(for id: Element.ID) -> Bool {
         elements.keys.contains(id)
     }
+    
+    /// Complexity: *O(1)*
+    public func index(for id: Element.ID) -> Int? {
+        elements[id]?.index
+    }
 
     /// Complexity: *O(1)* or *O(n)*, where *n* is the length of the dictionarray.
     public mutating func append(_ element: Element) {
