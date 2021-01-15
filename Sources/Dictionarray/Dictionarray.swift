@@ -59,8 +59,8 @@ public struct Dictionarray<Element>: MutableCollection, RandomAccessCollection w
     }
     
     /// Complexity: *O(1)*
-    public subscript(id id: Element.ID) -> Element? {
-        elements[id]?.element
+    public subscript(id id: Element.ID) -> Element {
+        elements[id]!.element
     }
     
     /// Complexity: *O(1)*

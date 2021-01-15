@@ -10,8 +10,8 @@ var users: Dictionarray<User> = [
 ]
 
 // All following operations run in O(1).
-print(users[0].name)          // Chris
-print(users[id: "aaa"]!.name) // Chris
+print(users[0].name)         // Chris
+print(users[id: "aaa"].name) // Chris
 
 users.append(User(id: "ddd", name: "Martin"))
 ```
