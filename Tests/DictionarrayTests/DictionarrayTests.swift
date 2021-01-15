@@ -183,11 +183,11 @@ final class DictionarrayTests: XCTestCase {
                 Foo(id: "b", value: 3),
                 Foo(id: "c", value: 5),
             ]
-            a[1] = Foo(id: "a", value: 19)
+            a[1] = Foo(id: "a", value: 7)
             XCTAssertEqual(a.count, 2)
-            XCTAssertEqual(a[0], Foo(id: "a", value: 19))
+            XCTAssertEqual(a[0], Foo(id: "a", value: 7))
             XCTAssertEqual(a[1], Foo(id: "c", value: 5))
-            XCTAssertEqual(a["a"], Foo(id: "a", value: 19))
+            XCTAssertEqual(a["a"], Foo(id: "a", value: 7))
             XCTAssertNil(a["b"])
             XCTAssertEqual(a["c"], Foo(id: "c", value: 5))
         }
@@ -204,6 +204,64 @@ final class DictionarrayTests: XCTestCase {
         XCTAssertEqual(a["b"], Foo(id: "b", value: 3))
         XCTAssertEqual(a["c"], Foo(id: "c", value: 5))
         XCTAssertNil(a["d"])
+    }
+    
+    func testSubscriptWithRange() {
+        do { // Range
+            let a: Dictionarray<Foo> = [
+                Foo(id: "a", value: 2),
+                Foo(id: "b", value: 3),
+                Foo(id: "c", value: 5),
+                Foo(id: "d", value: 7),
+                Foo(id: "e", value: 11),
+            ]
+            let r: DictionarraySlice<Foo> = a[1 ..< 4]
+            XCTAssertEqual(r.count, 3)
+            XCTAssertEqual(r[1], Foo(id: "b", value: 3))
+            XCTAssertEqual(r[2], Foo(id: "c", value: 5))
+            XCTAssertEqual(r[3], Foo(id: "d", value: 7))
+            XCTAssertNil(r["a"])
+            XCTAssertEqual(r["b"], Foo(id: "b", value: 3))
+            XCTAssertEqual(r["c"], Foo(id: "c", value: 5))
+            XCTAssertEqual(r["d"], Foo(id: "d", value: 7))
+            XCTAssertNil(r["e"])
+        }
+        
+        do { // general RangeExpression
+            let a: Dictionarray<Foo> = [
+                Foo(id: "a", value: 2),
+                Foo(id: "b", value: 3),
+                Foo(id: "c", value: 5),
+                Foo(id: "d", value: 7),
+                Foo(id: "e", value: 11),
+            ]
+            let r: DictionarraySlice<Foo> = a[1 ... 3]
+            XCTAssertEqual(r.count, 3)
+            XCTAssertEqual(r[1], Foo(id: "b", value: 3))
+            XCTAssertEqual(r[2], Foo(id: "c", value: 5))
+            XCTAssertEqual(r[3], Foo(id: "d", value: 7))
+            XCTAssertNil(r["a"])
+            XCTAssertEqual(r["b"], Foo(id: "b", value: 3))
+            XCTAssertEqual(r["c"], Foo(id: "c", value: 5))
+            XCTAssertEqual(r["d"], Foo(id: "d", value: 7))
+            XCTAssertNil(r["e"])
+        }
+        
+        do { // UnboundRange
+            let a: Dictionarray<Foo> = [
+                Foo(id: "a", value: 2),
+                Foo(id: "b", value: 3),
+                Foo(id: "c", value: 5),
+            ]
+            let r: DictionarraySlice<Foo> = a[...]
+            XCTAssertEqual(r.count, 3)
+            XCTAssertEqual(r[0], Foo(id: "a", value: 2))
+            XCTAssertEqual(r[1], Foo(id: "b", value: 3))
+            XCTAssertEqual(r[2], Foo(id: "c", value: 5))
+            XCTAssertEqual(a["a"], Foo(id: "a", value: 2))
+            XCTAssertEqual(a["b"], Foo(id: "b", value: 3))
+            XCTAssertEqual(a["c"], Foo(id: "c", value: 5))
+        }
     }
     
     func testAppend() {
