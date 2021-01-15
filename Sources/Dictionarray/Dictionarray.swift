@@ -24,6 +24,12 @@ public struct Dictionarray<Element>: MutableCollection, RandomAccessCollection w
         self.init(Array(elements))
     }
 
+    private mutating func updateIndicesOfElements(in indices: Range<Int>) {
+        for index in indices {
+            elements[ids[index]]!.index = index
+        }
+    }
+    
     /// Complexity: *O(1)* for `get`, *O(1)* or *O(n)* for `set` where *n* is the length of the dictionarray.
     public subscript(index: Int) -> Element {
         get {
@@ -72,12 +78,6 @@ public struct Dictionarray<Element>: MutableCollection, RandomAccessCollection w
         DictionarraySlice<Element>(ids: ids[bounds], elements: elements)
     }
     
-    private mutating func updateIndicesOfElements(in indices: Range<Int>) {
-        for index in indices {
-            elements[ids[index]]!.index = index
-        }
-    }
-    
     /// Complexity: *O(1)*
     public func containsElement(for id: Element.ID) -> Bool {
         elements.keys.contains(id)
@@ -94,7 +94,7 @@ public struct Dictionarray<Element>: MutableCollection, RandomAccessCollection w
             ids.remove(at: oldIndex)
             updateIndicesOfElements(in: oldIndex ..< ids.endIndex)
         }
-        elements[element.id] = (ids.count, element)
+        elements[element.id] = (ids.endIndex, element)
         ids.append(element.id)
     }
     

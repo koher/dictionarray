@@ -21,13 +21,27 @@ public struct DictionarraySlice<Element>: MutableCollection, RandomAccessCollect
         self.init(Dictionarray(elements))
     }
     
+    private mutating func refreshElementsIfNeeded() {
+        guard elements.count == elements.capacity else { return }
+        var newElements: [Element.ID: (index: Int, element: Element)] = [:]
+        for id in ids {
+            newElements[id] = elements[id]!
+        }
+        elements = newElements
+    }
+    
+    private mutating func updateIndicesOfElements(in indices: Range<Int>) {
+        for index in indices {
+            elements[ids[index]]!.index = index
+        }
+    }
+    
     /// Complexity: *O(1)* for `get`, *O(1)* or *O(n)* for `set` where *n* is the length of the dictionarray.
     public subscript(index: Int) -> Element {
         get {
             elements[ids[index]]!.element
         }
         set {
-            precondition(indices.contains(index))
             if self[index].id == newValue.id {
                 elements[newValue.id] = (index, newValue)
             } else if let oldIndex = elements[newValue.id]?.index {
@@ -37,6 +51,7 @@ public struct DictionarraySlice<Element>: MutableCollection, RandomAccessCollect
                     index -= 1
                 }
                 ids.remove(at: oldIndex)
+                updateIndicesOfElements(in: oldIndex ..< ids.endIndex)
                 elements[newValue.id] = (index, newValue)
                 ids[index] = newValue.id
                 elements.removeValue(forKey: oldID)
@@ -52,7 +67,7 @@ public struct DictionarraySlice<Element>: MutableCollection, RandomAccessCollect
     /// Complexity: *O(1)*
     public subscript(id: Element.ID) -> Element? {
         guard let (index, element) = elements[id] else { return nil }
-        return indices.contains(index) ? element : nil
+        return ids.indices.contains(index) ? element : nil
     }
     
     /// Complexity: *O(1)*
@@ -72,32 +87,24 @@ public struct DictionarraySlice<Element>: MutableCollection, RandomAccessCollect
     
     /// Complexity: *O(1)*
     public func containsElement(for id: Element.ID) -> Bool {
-        guard let index = elements[id]?.index else { return false }
-        return indices.contains(index)
+        guard let (index, _) = elements[id] else { return false }
+        return ids.indices.contains(index)
     }
     
     /// Complexity: *O(1)*
     public func index(for id: Element.ID) -> Int? {
-        guard let index = elements[id]?.index else { return nil }
-        return indices.contains(index) ? index : nil
+        guard let (index, _) = elements[id] else { return nil }
+        return ids.indices.contains(index) ? index : nil
     }
 
-    private mutating func refreshElementsIfNeeded() {
-        guard elements.count == elements.capacity else { return }
-        var newElements: [Element.ID: (index: Int, element: Element)] = [:]
-        for id in ids {
-            newElements[id] = elements[id]!
-        }
-        elements = newElements
-    }
-    
     /// Complexity: *O(1)* or *O(n)*, where *n* is the length of the dictionarray.
     public mutating func append(_ element: Element) {
         if let oldIndex = elements[element.id]?.index {
             ids.remove(at: oldIndex)
+            updateIndicesOfElements(in: oldIndex ..< ids.endIndex)
         }
         refreshElementsIfNeeded()
-        elements[element.id] = (ids.count, element)
+        elements[element.id] = (ids.endIndex, element)
         ids.append(element.id)
     }
     
@@ -106,13 +113,24 @@ public struct DictionarraySlice<Element>: MutableCollection, RandomAccessCollect
         var index: Int = index
         if let oldIndex = elements[element.id]?.index {
             ids.remove(at: oldIndex)
-            if oldIndex < index {
+            if oldIndex == index {
+                elements[element.id] = (index, element)
+            } else if oldIndex < index {
                 index -= 1
+                updateIndicesOfElements(in: oldIndex ..< index)
+                elements[element.id] = (index, element)
+                ids.insert(element.id, at: index)
+            } else {
+                elements[element.id] = (index, element)
+                ids.insert(element.id, at: index)
+                updateIndicesOfElements(in: index + 1 ..< oldIndex + 1)
             }
+        } else {
+            refreshElementsIfNeeded()
+            elements[element.id] = (index, element)
+            ids.insert(element.id, at: index)
+            updateIndicesOfElements(in: ids.index(after: index) ..< ids.endIndex)
         }
-        refreshElementsIfNeeded()
-        elements[element.id] = (index, element)
-        ids.insert(element.id, at: index)
     }
     
     /// Complexity: *O(1)*
@@ -138,6 +156,7 @@ public struct DictionarraySlice<Element>: MutableCollection, RandomAccessCollect
     @discardableResult
     public mutating func remove(at index: Int) -> Element {
         let id = ids.remove(at: index)
+        updateIndicesOfElements(in: index ..< ids.endIndex)
         return elements.removeValue(forKey: id)!.element
     }
     
