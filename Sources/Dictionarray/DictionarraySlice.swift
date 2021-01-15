@@ -21,7 +21,7 @@ public struct DictionarraySlice<Element>: MutableCollection, RandomAccessCollect
         self.init(Dictionarray(elements))
     }
     
-    /// Complexity: *O(1)*
+    /// Complexity: *O(1)* for `get`, *O(1)* or *O(n)* for `set` where *n* is the length of the dictionarray.
     public subscript(index: Int) -> Element {
         get {
             elements[ids[index]]!.element
@@ -85,7 +85,7 @@ public struct DictionarraySlice<Element>: MutableCollection, RandomAccessCollect
         elements = newElements
     }
     
-    /// Complexity: *O(1)*
+    /// Complexity: *O(1)* or *O(n)*, where *n* is the length of the dictionarray.
     public mutating func append(_ element: Element) {
         if let oldIndex = elements[element.id]?.index {
             ids.remove(at: oldIndex)

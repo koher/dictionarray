@@ -76,7 +76,7 @@ public struct Dictionarray<Element>: MutableCollection, RandomAccessCollection w
         elements.keys.contains(id)
     }
 
-    /// Complexity: *O(1)*
+    /// Complexity: *O(1)* or *O(n)*, where *n* is the length of the dictionarray.
     public mutating func append(_ element: Element) {
         if let oldIndex = elements[element.id]?.index {
             ids.remove(at: oldIndex)
