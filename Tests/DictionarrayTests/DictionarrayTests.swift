@@ -20,6 +20,9 @@ final class DictionarrayTests: XCTestCase {
             XCTAssertEqual(a["a"], Foo(id: "a", value: 2))
             XCTAssertEqual(a["b"], Foo(id: "b", value: 3))
             XCTAssertEqual(a["c"], Foo(id: "c", value: 5))
+            XCTAssertEqual(a.index(for: "a"), 0)
+            XCTAssertEqual(a.index(for: "b"), 1)
+            XCTAssertEqual(a.index(for: "c"), 2)
         }
         do { // init<S>(_: S) where S: Sequence, S.Element == Element
             let a: Dictionarray<Foo> = .init([
@@ -34,6 +37,9 @@ final class DictionarrayTests: XCTestCase {
             XCTAssertEqual(a["a"], Foo(id: "a", value: 2))
             XCTAssertEqual(a["b"], Foo(id: "b", value: 3))
             XCTAssertEqual(a["c"], Foo(id: "c", value: 5))
+            XCTAssertEqual(a.index(for: "a"), 0)
+            XCTAssertEqual(a.index(for: "b"), 1)
+            XCTAssertEqual(a.index(for: "c"), 2)
         }
         do { // init(arrayLiteral:)
             let a: Dictionarray<Foo> = [
@@ -48,6 +54,9 @@ final class DictionarrayTests: XCTestCase {
             XCTAssertEqual(a["a"], Foo(id: "a", value: 2))
             XCTAssertEqual(a["b"], Foo(id: "b", value: 3))
             XCTAssertEqual(a["c"], Foo(id: "c", value: 5))
+            XCTAssertEqual(a.index(for: "a"), 0)
+            XCTAssertEqual(a.index(for: "b"), 1)
+            XCTAssertEqual(a.index(for: "c"), 2)
         }
     }
     
@@ -107,6 +116,9 @@ final class DictionarrayTests: XCTestCase {
             XCTAssertEqual(a["a"], Foo(id: "a", value: 2))
             XCTAssertEqual(a["b"], Foo(id: "b", value: 7))
             XCTAssertEqual(a["c"], Foo(id: "c", value: 5))
+            XCTAssertEqual(a.index(for: "a"), 0)
+            XCTAssertEqual(a.index(for: "b"), 1)
+            XCTAssertEqual(a.index(for: "c"), 2)
         }
 
         do { // get and set
@@ -123,6 +135,9 @@ final class DictionarrayTests: XCTestCase {
             XCTAssertEqual(a["a"], Foo(id: "a", value: 2))
             XCTAssertEqual(a["b"], Foo(id: "b", value: 7))
             XCTAssertEqual(a["c"], Foo(id: "c", value: 5))
+            XCTAssertEqual(a.index(for: "a"), 0)
+            XCTAssertEqual(a.index(for: "b"), 1)
+            XCTAssertEqual(a.index(for: "c"), 2)
         }
         
         do { // set element with different id
@@ -140,6 +155,10 @@ final class DictionarrayTests: XCTestCase {
             XCTAssertNil(a["b"])
             XCTAssertEqual(a["c"], Foo(id: "c", value: 5))
             XCTAssertEqual(a["d"], Foo(id: "d", value: 7))
+            XCTAssertEqual(a.index(for: "a"), 0)
+            XCTAssertNil(a.index(for: "b"))
+            XCTAssertEqual(a.index(for: "c"), 2)
+            XCTAssertEqual(a.index(for: "d"), 1)
         }
         
         do { // set element with different existing id
@@ -147,14 +166,25 @@ final class DictionarrayTests: XCTestCase {
                 Foo(id: "a", value: 2),
                 Foo(id: "b", value: 3),
                 Foo(id: "c", value: 5),
+                Foo(id: "d", value: 7),
+                Foo(id: "e", value: 11),
             ]
-            a[0] = Foo(id: "c", value: 7)
-            XCTAssertEqual(a.count, 2)
-            XCTAssertEqual(a[0], Foo(id: "c", value: 7))
-            XCTAssertEqual(a[1], Foo(id: "b", value: 3))
-            XCTAssertNil(a["a"])
-            XCTAssertEqual(a["b"], Foo(id: "b", value: 3))
-            XCTAssertEqual(a["c"], Foo(id: "c", value: 7))
+            a[1] = Foo(id: "d", value: 13)
+            XCTAssertEqual(a.count, 4)
+            XCTAssertEqual(a[0], Foo(id: "a", value: 2))
+            XCTAssertEqual(a[1], Foo(id: "d", value: 13))
+            XCTAssertEqual(a[2], Foo(id: "c", value: 5))
+            XCTAssertEqual(a[3], Foo(id: "e", value: 11))
+            XCTAssertEqual(a["a"], Foo(id: "a", value: 2))
+            XCTAssertNil(a["b"])
+            XCTAssertEqual(a["c"], Foo(id: "c", value: 5))
+            XCTAssertEqual(a["d"], Foo(id: "d", value: 13))
+            XCTAssertEqual(a["e"], Foo(id: "e", value: 11))
+            XCTAssertEqual(a.index(for: "a"), 0)
+            XCTAssertNil(a.index(for: "b"))
+            XCTAssertEqual(a.index(for: "c"), 2)
+            XCTAssertEqual(a.index(for: "d"), 1)
+            XCTAssertEqual(a.index(for: "e"), 3)
         }
 
         do { // set element with different existing id (old index < new index)
@@ -162,14 +192,25 @@ final class DictionarrayTests: XCTestCase {
                 Foo(id: "a", value: 2),
                 Foo(id: "b", value: 3),
                 Foo(id: "c", value: 5),
+                Foo(id: "d", value: 7),
+                Foo(id: "e", value: 11),
             ]
-            a[2] = Foo(id: "a", value: 7)
-            XCTAssertEqual(a.count, 2)
-            XCTAssertEqual(a[0], Foo(id: "b", value: 3))
-            XCTAssertEqual(a[1], Foo(id: "a", value: 7))
-            XCTAssertEqual(a["a"], Foo(id: "a", value: 7))
-            XCTAssertEqual(a["b"], Foo(id: "b", value: 3))
-            XCTAssertNil(a["c"])
+            a[3] = Foo(id: "b", value: 13)
+            XCTAssertEqual(a.count, 4)
+            XCTAssertEqual(a[0], Foo(id: "a", value: 2))
+            XCTAssertEqual(a[1], Foo(id: "c", value: 5))
+            XCTAssertEqual(a[2], Foo(id: "b", value: 13))
+            XCTAssertEqual(a[3], Foo(id: "e", value: 11))
+            XCTAssertEqual(a["a"], Foo(id: "a", value: 2))
+            XCTAssertEqual(a["b"], Foo(id: "b", value: 13))
+            XCTAssertEqual(a["c"], Foo(id: "c", value: 5))
+            XCTAssertNil(a["d"])
+            XCTAssertEqual(a["e"], Foo(id: "e", value: 11))
+            XCTAssertEqual(a.index(for: "a"), 0)
+            XCTAssertEqual(a.index(for: "b"), 2)
+            XCTAssertEqual(a.index(for: "c"), 1)
+            XCTAssertNil(a.index(for: "d"))
+            XCTAssertEqual(a.index(for: "e"), 3)
         }
 
         do { // change id
@@ -187,6 +228,10 @@ final class DictionarrayTests: XCTestCase {
             XCTAssertNil(a["b"])
             XCTAssertEqual(a["c"], Foo(id: "c", value: 5))
             XCTAssertEqual(a["d"], Foo(id: "d", value: 3))
+            XCTAssertEqual(a.index(for: "a"), 0)
+            XCTAssertNil(a.index(for: "b"))
+            XCTAssertEqual(a.index(for: "c"), 2)
+            XCTAssertEqual(a.index(for: "d"), 1)
         }
     }
     
@@ -284,6 +329,10 @@ final class DictionarrayTests: XCTestCase {
             XCTAssertEqual(a["b"], Foo(id: "b", value: 3))
             XCTAssertEqual(a["c"], Foo(id: "c", value: 5))
             XCTAssertEqual(a["d"], Foo(id: "d", value: 7))
+            XCTAssertEqual(a.index(for: "a"), 0)
+            XCTAssertEqual(a.index(for: "b"), 1)
+            XCTAssertEqual(a.index(for: "c"), 2)
+            XCTAssertEqual(a.index(for: "d"), 3)
         }
         
         do { // element with existing id
@@ -300,6 +349,9 @@ final class DictionarrayTests: XCTestCase {
             XCTAssertEqual(a["a"], Foo(id: "a", value: 2))
             XCTAssertEqual(a["b"], Foo(id: "b", value: 7))
             XCTAssertEqual(a["c"], Foo(id: "c", value: 5))
+            XCTAssertEqual(a.index(for: "a"), 0)
+            XCTAssertEqual(a.index(for: "b"), 2)
+            XCTAssertEqual(a.index(for: "c"), 1)
         }
     }
     
@@ -320,6 +372,10 @@ final class DictionarrayTests: XCTestCase {
             XCTAssertEqual(a["b"], Foo(id: "b", value: 3))
             XCTAssertEqual(a["c"], Foo(id: "c", value: 5))
             XCTAssertEqual(a["d"], Foo(id: "d", value: 7))
+            XCTAssertEqual(a.index(for: "a"), 0)
+            XCTAssertEqual(a.index(for: "b"), 2)
+            XCTAssertEqual(a.index(for: "c"), 3)
+            XCTAssertEqual(a.index(for: "d"), 1)
         }
         
         do { // element with existing id
@@ -342,6 +398,11 @@ final class DictionarrayTests: XCTestCase {
             XCTAssertEqual(a["c"], Foo(id: "c", value: 5))
             XCTAssertEqual(a["d"], Foo(id: "d", value: 13))
             XCTAssertEqual(a["e"], Foo(id: "e", value: 11))
+            XCTAssertEqual(a.index(for: "a"), 0)
+            XCTAssertEqual(a.index(for: "b"), 2)
+            XCTAssertEqual(a.index(for: "c"), 3)
+            XCTAssertEqual(a.index(for: "d"), 1)
+            XCTAssertEqual(a.index(for: "e"), 4)
         }
         
         do { // element with existing id (old index < new index)
@@ -364,6 +425,11 @@ final class DictionarrayTests: XCTestCase {
             XCTAssertEqual(a["c"], Foo(id: "c", value: 5))
             XCTAssertEqual(a["d"], Foo(id: "d", value: 7))
             XCTAssertEqual(a["e"], Foo(id: "e", value: 11))
+            XCTAssertEqual(a.index(for: "a"), 0)
+            XCTAssertEqual(a.index(for: "b"), 3)
+            XCTAssertEqual(a.index(for: "c"), 1)
+            XCTAssertEqual(a.index(for: "d"), 2)
+            XCTAssertEqual(a.index(for: "e"), 4)
         }
     }
     
@@ -381,17 +447,23 @@ final class DictionarrayTests: XCTestCase {
         XCTAssertEqual(a["a"], Foo(id: "a", value: 2))
         XCTAssertEqual(a["b"], Foo(id: "b", value: 3))
         XCTAssertNil(a["c"])
-        
+        XCTAssertEqual(a.index(for: "a"), 0)
+        XCTAssertEqual(a.index(for: "b"), 1)
+        XCTAssertNil(a.index(for: "c"))
+
         XCTAssertEqual(a.popLast(), Foo(id: "b", value: 3))
         XCTAssertEqual(a.count, 1)
         XCTAssertEqual(a[0], Foo(id: "a", value: 2))
         XCTAssertEqual(a["a"], Foo(id: "a", value: 2))
         XCTAssertNil(a["b"])
-        
+        XCTAssertEqual(a.index(for: "a"), 0)
+        XCTAssertNil(a.index(for: "b"))
+
         XCTAssertEqual(a.popLast(), Foo(id: "a", value: 2))
         XCTAssertEqual(a.count, 0)
         XCTAssertNil(a["a"])
-        
+        XCTAssertNil(a.index(for: "a"))
+
         XCTAssertNil(a.popLast())
     }
     
@@ -409,6 +481,9 @@ final class DictionarrayTests: XCTestCase {
             XCTAssertEqual(a["a"], Foo(id: "a", value: 2))
             XCTAssertNil(a["b"])
             XCTAssertEqual(a["c"], Foo(id: "c", value: 5))
+            XCTAssertEqual(a.index(for: "a"), 0)
+            XCTAssertNil(a.index(for: "b"))
+            XCTAssertEqual(a.index(for: "c"), 1)
         }
         do {
             var a: Dictionarray<Foo> = [
@@ -424,6 +499,9 @@ final class DictionarrayTests: XCTestCase {
             XCTAssertEqual(a["a"], Foo(id: "a", value: 2))
             XCTAssertEqual(a["b"], Foo(id: "b", value: 3))
             XCTAssertEqual(a["c"], Foo(id: "c", value: 5))
+            XCTAssertEqual(a.index(for: "a"), 0)
+            XCTAssertEqual(a.index(for: "b"), 1)
+            XCTAssertEqual(a.index(for: "c"), 2)
         }
     }
     
@@ -441,16 +519,22 @@ final class DictionarrayTests: XCTestCase {
         XCTAssertEqual(a["a"], Foo(id: "a", value: 2))
         XCTAssertEqual(a["b"], Foo(id: "b", value: 3))
         XCTAssertNil(a["c"])
-        
+        XCTAssertEqual(a.index(for: "a"), 0)
+        XCTAssertEqual(a.index(for: "b"), 1)
+        XCTAssertNil(a.index(for: "c"))
+
         XCTAssertEqual(a.removeLast(), Foo(id: "b", value: 3))
         XCTAssertEqual(a.count, 1)
         XCTAssertEqual(a[0], Foo(id: "a", value: 2))
         XCTAssertEqual(a["a"], Foo(id: "a", value: 2))
         XCTAssertNil(a["b"])
-        
+        XCTAssertEqual(a.index(for: "a"), 0)
+        XCTAssertNil(a.index(for: "b"))
+
         XCTAssertEqual(a.removeLast(), Foo(id: "a", value: 2))
         XCTAssertEqual(a.count, 0)
         XCTAssertNil(a["a"])
+        XCTAssertNil(a.index(for: "a"))
     }
     
     func testRemove() {
@@ -463,6 +547,12 @@ final class DictionarrayTests: XCTestCase {
         XCTAssertEqual(a.count, 2)
         XCTAssertEqual(a[0], Foo(id: "a", value: 2))
         XCTAssertEqual(a[1], Foo(id: "c", value: 5))
+        XCTAssertEqual(a["a"], Foo(id: "a", value: 2))
+        XCTAssertNil(a["b"])
+        XCTAssertEqual(a["c"], Foo(id: "c", value: 5))
+        XCTAssertEqual(a.index(for: "a"), 0)
+        XCTAssertNil(a.index(for: "b"))
+        XCTAssertEqual(a.index(for: "c"), 1)
     }
     
     func testRemoveElement() {
@@ -478,6 +568,9 @@ final class DictionarrayTests: XCTestCase {
         XCTAssertEqual(a["a"], Foo(id: "a", value: 2))
         XCTAssertNil(a["b"])
         XCTAssertEqual(a["c"], Foo(id: "c", value: 5))
+        XCTAssertEqual(a.index(for: "a"), 0)
+        XCTAssertNil(a.index(for: "b"))
+        XCTAssertEqual(a.index(for: "c"), 1)
     }
     
     func testIterator() {
