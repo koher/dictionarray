@@ -18,6 +18,24 @@ users.append(User(id: "ddd", name: "Martin"))
 
 Elements of `Dictionarray`s must be conform to `Identifiable`. `id`s of elements can be used as keys to get elements from `Dictionarray`s through `subscript(id:)`.
 
+## With SwiftUI
+
+`Dictionarray` is useful when used combined with SwiftUI's `Binding` and `ForEach`.
+
+```swift
+struct UsersView: View {
+    @Binding var users: Dictionarray<User>
+
+    var body: some View {
+        LazyVStack {
+            ForEach(users.ids, id: \.self) { id in
+                UserView($users[id: id])
+            }
+        }
+    }
+}
+```
+
 ## License
 
 MIT
